@@ -1,211 +1,293 @@
-.newWbsRequest {
-  padding: 10px;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
+/* ================= THEME TOKENS ================= */
+:root {
+  --bar-teal: #3c758b;                  
+  --action-strip: #e7e7e7;              
+  --tab-active: #1f7fb8;                
+  --tab-border: #bfc6cc;
+
+  --panel-grey: #ececec;                
+  --panel-border: #d9d9d9;
+  --card-white: #ffffff;
+
+  --input-border: #c9c9c9;
+  --input-bg: #ffffff;
+  --disabled-bg: #d8d8d8;
+
+  --text-dark: #2c2c2c;
+  --text-muted: #666;
 }
 
-/* ---------------- HEADER ---------------- */
-.header {
-  background: #447c93;
+/* ================ PAGE WRAPPER ================ */
+.newWbsRequest {
   padding: 8px 12px;
-  border-radius: 4px 4px 0 0;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+/* ================ TITLE BAR =================== */
+.header {
+  background: var(--bar-teal);
+  padding: 9px 12px;
+  border-radius: 3px 3px 0 0;
 
   h2 {
     margin: 0;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 700;
     color: #fff;
   }
 }
 
-/* ---------------- ACTION BUTTONS ---------------- */
+/* ============== ACTION BUTTON STRIP =========== */
 .actions {
-  margin: 5px 0;
-  background: #f4f4f4;
-  padding: 8px;
+  background: var(--action-strip);
+  border: 1px solid #e2e2e2;
+  border-top: none;
+  padding: 7px 12px;
+  display: flex;
+  gap: 10px;
+
+  .btn,
+  .btnPrimary {
+    height: 28px;
+    padding: 0 14px;
+    border-radius: 3px;
+    font-weight: 600;
+    line-height: 28px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
 
   .btn {
-    margin-right: 6px;
-    padding: 5px 12px;
-    border: 1px solid #ccc;
-    background: #fff;
-    cursor: pointer;
-    border-radius: 3px;
-
-    &:hover {
-      background: #f2f2f2;
-    }
+    background: #0a7db7;
+    color: #fff;
+    border: 1px solid #0a74a9;
   }
 
   .btnPrimary {
-    margin-left: 6px;
-    padding: 5px 12px;
-    background: #0078d4;
+    background: #0a7db7;
     color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-
-    &:hover {
-      background: #005a9e;
-    }
+    border: 1px solid #0a74a9;
   }
 }
 
-/* ---------------- TABS ---------------- */
+/* ===== HEADER FIELDS (white card within grey strip) ===== */
+.headerFieldsShell {
+  background: #e8e8e8;
+  border-top: 1px solid #e1e1e1;
+  border-bottom: 1px solid #e1e1e1;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.headerFieldsCard {
+  background: var(--card-white);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.headerRow {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.headerLabelCol {
+  text-align: center;
+}
+
+.headerLabelText {
+  font-weight: 700;
+}
+
+.headerFieldCol {
+  width: 100%;
+}
+
+.withIcon {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.squareIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 30px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.input {
+  height: 30px;
+  padding: 5px 8px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--input-bg);
+}
+
+.statusBar {
+  height: 30px;
+  border-radius: 4px;
+  background: var(--disabled-bg);
+  border: 1px solid var(--input-border);
+}
+
+/* ================== FORM ROWS ================== */
+.formRow {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+
+  label {
+    font-weight: 600;
+    justify-self: end;
+    padding-right: 6px;
+  }
+}
+
+.inputWithIcon {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: center;
+  gap: 6px;
+
+  input,
+  select,
+  textarea {
+    height: 30px;
+    padding: 4px 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    width: 100%;
+  }
+
+  textarea {
+    height: 100px;
+    resize: vertical;
+  }
+}
+
+.inputIcon {
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ================== TABS ====================== */
 .tabs {
-  margin-bottom: 0;
   display: flex;
-  border-bottom: 1px solid #ccc;
+  gap: 6px;
+  padding-top: 6px;
+  border-bottom: 1px solid var(--tab-border);
 
   button {
-    background: #f4f4f4;
-    border: 1px solid #ccc;
-    border-bottom: none;
-    margin-right: 4px;
     padding: 6px 12px;
+    border-radius: 3px 3px 0 0;
+    border: 1px solid var(--tab-border);
+    border-bottom: none;
+    background: #f6f6f6;
+    font-weight: 700;
+    color: var(--text-dark);
     cursor: pointer;
-    font-weight: bold;
-    border-radius: 4px 4px 0 0;
-
-    &:hover {
-      background: #eaeaea;
-    }
   }
 
   .activeTab {
-    background: #fff;
-    border: 1px solid #ccc;
-    border-bottom: 1px solid #fff;
-    color: #000;
+    background: var(--tab-active);
+    color: #fff;
+    border-color: var(--tab-active);
   }
 }
 
-/* ---------------- TAB CONTENT ---------------- */
+/* =============== TAB PANELS =================== */
 .tabContent {
   margin-top: 0;
 }
 
 .tabContainer {
-  border: 1px solid #ccc;
-  background: #f2f2f2;
-  padding: 15px;
-  border-radius: 4px;
-  margin-top: 10px;
+  border: 1px solid var(--tab-border);
+  background: var(--panel-grey);
+  padding: 16px;
+  border-radius: 0 0 3px 3px;
 }
 
-.formSection {
-  .row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-
-    label {
-      flex: 0 0 220px;
-      font-weight: bold;
-    }
-
-    input,
-    select,
-    textarea {
-      flex: 1;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: #fff;
-    }
-  }
-}
-
-.gridHeader {
+/* ============ GRID HEADERS =================== */
+.gridHeader,
+.gridHeaderWorksheet,
+.gridHeaderApproval {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  font-weight: bold;
-  background: #666;
+  font-weight: 700;
+  background: #5b5b5b;
   color: #fff;
-  padding: 6px;
-  border-radius: 4px 4px 0 0;
+  padding: 8px 10px;
+  border-radius: 3px 3px 0 0;
+}
+
+.gridHeaderApproval {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .gridRow {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 8px;
-  border: 1px solid #ccc;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--panel-border);
   border-top: none;
+  background: #fff;   /* FIX: was dark before, now white */
   align-items: center;
 
   label {
-    font-weight: bold;
+    font-weight: 700;
   }
 
   input,
   textarea {
-    padding: 6px;
-    border: 1px solid #ccc;
+    padding: 6px 8px;
+    border: 1px solid var(--input-border);
     border-radius: 4px;
   }
 
   textarea {
-    width: 100%;
-    height: 80px;
-    resize: vertical;
-    background: #fff;
+    grid-column: 2 / span 2;
+    height: 120px;
   }
 }
 
-
-/* ---------------- FORM SECTION (Basic Info tab) ---------------- */
-.formSection {
-  .row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-
-    label {
-      flex: 0 0 200px;
-      font-weight: bold;
-    }
-
-    input,
-    select {
-      flex: 1;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
-  }
-}
-
-/* ---------------- CREATOR SECTION ---------------- */
-.checkApproval {
-  background: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 10px;
-}
-
+/* ============== CREATOR SECTION ============== */
 .creatorSection {
-  margin-top: 15px;
+  margin-top: 14px;
   padding: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--panel-border);
   background: #fff;
-  border-radius: 4px;
+  border-radius: 3px;
 
-  .row {
-    display: flex;
+  .formRow {
     margin-bottom: 10px;
-
-    label {
-      flex: 0 0 220px;
-      font-weight: bold;
-    }
-
-    input {
-      flex: 1;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
   }
+}
+
+/* ============== UTILITIES ===================== */
+.req {
+  color: #b40000;
+  font-weight: 700;
+}
+.helpText {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
 }

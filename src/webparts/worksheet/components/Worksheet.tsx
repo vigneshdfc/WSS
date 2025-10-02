@@ -1,14 +1,80 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Icon } from "@fluentui/react/lib/Icon";
 import styles from "./Worksheet.module.scss";
 import { IWorksheetProps } from "./IWorksheetProps";
 
-const Worksheet: React.FC<IWorksheetProps> = (props: IWorksheetProps) => {
+const Worksheet: React.FC<IWorksheetProps> = (props: IWorksheetProps): JSX.Element => {
   const [activeTab, setActiveTab] = useState<"basic" | "worksheet" | "approval">("basic");
+
+  // Dropdown states
+  const [standards, setStandards] = useState<string[]>([]);
+  const [projects, setProjects] = useState<string[]>([]);
+  const [subProjects, setSubProjects] = useState<string[]>([]);
+  const [models, setModels] = useState<string[]>([]);
+  const [subModels, setSubModels] = useState<string[]>([]);
+  const [qualityGates, setQualityGates] = useState<string[]>([]);
+
+  // Header fields
+  const [standardNumber, setStandardNumber] = useState<string>("eAxle Gearbox for electric vehicle Design standard");
+  const [title, setTitle] = useState<string>("");
+
+  const siteUrl = "https://corptb.sharepoint.com/sites/apac-04929-WSS";
+
+  // Fetch SharePoint list items helper
+  const fetchListItems = async (listName: string, field: string = "Title"): Promise<string[]> => {
+    try {
+      const response = await fetch(
+        `${siteUrl}/_api/web/lists/getbytitle('${listName}')/items?$select=${field}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json;odata=nometadata",
+          },
+        }
+      );
+
+      const data = await response.json();
+      return data.value.map((i: any) => i[field]);
+    } catch (error) {
+      console.error(`Error fetching list ${listName}:`, error);
+      return [];
+    }
+  };
+
+  // Fetch all data for dropdowns
+  const fetchAllData = async (): Promise<void> => {
+    const [
+      standardsData,
+      projectsData,
+      subProjectsData,
+      modelsData,
+      subModelsData,
+      gatesData,
+    ] = await Promise.all([
+      fetchListItems("DesignStandard", "Title"),
+      fetchListItems("Project Configuration", "Project"),
+      fetchListItems("Project Configuration", "Title"),
+      fetchListItems("Model Configuration", "Model"),
+      fetchListItems("Model Configuration", "Title"),
+      fetchListItems("WSS", "Gate"),
+    ]);
+
+    setStandards(standardsData);
+    setProjects(projectsData);
+    setSubProjects(subProjectsData);
+    setModels(modelsData);
+    setSubModels(subModelsData);
+    setQualityGates(gatesData);
+  };
+
+  useEffect(() => {
+    void fetchAllData();
+  }, []);
 
   return (
     <div className={styles.newWbsRequest}>
-      {/* Header */}
+      {/* Top Title Bar */}
       <div className={styles.header}>
         <h2>New WSS Request</h2>
       </div>
@@ -19,6 +85,66 @@ const Worksheet: React.FC<IWorksheetProps> = (props: IWorksheetProps) => {
         <button className={styles.btn}>Close</button>
         <button className={styles.btn}>Go to Home page</button>
         <button className={styles.btnPrimary}>Open design standard</button>
+      </div>
+
+      {/* Header Fields */}
+      <div className={styles.headerFieldsShell}>
+        <div className={styles.headerFieldsCard}>
+          {/* Standard Number */}
+          <div className={styles.headerRow}>
+            <div className={styles.headerLabelCol}>
+              <span className={styles.headerLabelText}>Standard Number</span>
+            </div>
+            <div className={styles.headerFieldCol}>
+              <div className={styles.withIcon}>
+                <Icon iconName="List" className={styles.inputIcon} />
+                <select
+                  className={styles.input}
+                  value={standardNumber}
+                  onChange={(e) => setStandardNumber(e.target.value)}
+                >
+                  <option>eAxle Gearbox for electric vehicle Design standard</option>
+                  {standards.map((s, i) => (
+                    <option key={i} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Title */}
+          <div className={styles.headerRow}>
+            <div className={styles.headerLabelCol}>
+              <span className={styles.headerLabelText}>Title</span>
+            </div>
+            <div className={styles.headerFieldCol}>
+              <div className={styles.withIcon}>
+                <Icon iconName="Edit" className={styles.inputIcon} />
+                <input
+                  className={styles.input}
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Status */}
+          <div className={styles.headerRow}>
+            <div className={styles.headerLabelCol}>
+              <span className={styles.headerLabelText}>Status</span>
+            </div>
+            <div className={styles.headerFieldCol}>
+              <div className={styles.withIcon}>
+                <Icon iconName="Blocked" className={styles.inputIcon} />
+                <input className={styles.input} type="text" disabled />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -45,70 +171,149 @@ const Worksheet: React.FC<IWorksheetProps> = (props: IWorksheetProps) => {
 
       {/* Tab Content */}
       <div className={styles.tabContent}>
-        {/* Basic Info Tab */}
+        {/* === BASIC INFO === */}
         {activeTab === "basic" && (
           <div className={styles.tabContainer}>
-            <div className={styles.formSection}>
-              <div className={styles.row}>
+            <div className={styles.headerFieldsShell}>
+              {/* Worksheet Number */}
+              <div className={styles.formRow}>
                 <label>Worksheet Number</label>
-                <input type="text" />
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="Blocked" className={styles.inputIcon} />
+                  <input type="text" disabled />
+                </div>
               </div>
-              <div className={styles.row}>
+
+              {/* Standard Name */}
+              <div className={styles.formRow}>
                 <label>Standard Name</label>
-                <input type="text" />
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="Blocked" className={styles.inputIcon} />
+                  <input type="text" value="MSW1-9658S" disabled />
+                </div>
               </div>
-              <div className={styles.row}>
+
+              {/* LEG */}
+              <div className={styles.formRow}>
                 <label>LEG</label>
-                <input type="text" />
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="Blocked" className={styles.inputIcon} />
+                  <input type="text" disabled />
+                </div>
               </div>
-              <div className={styles.row}>
+
+              {/* UPG */}
+              <div className={styles.formRow}>
                 <label>UPG</label>
-                <input type="text" />
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="Blocked" className={styles.inputIcon} />
+                  <input type="text" disabled />
+                </div>
               </div>
-              <div className={styles.row}>
-                <label>EO/Shikeisho No. <span>required</span></label>
-                <input type="text" placeholder="Comma separated values" />
+
+              {/* EO/Shikeisho */}
+              <div className={styles.formRow}>
+                <label>EO/Shikeisho No.</label>
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="Edit" className={styles.inputIcon} />
+                  <input type="text" />
+                </div>
+                <div className={styles.helpText}>EO or Shikeisyo No. are separated by comma.</div>
               </div>
-              <div className={styles.row}>
+
+              {/* Project */}
+              <div className={styles.formRow}>
                 <label>Project</label>
-                <select>
-                  <option>Select</option>
-                  <option>SMEC</option>
-                </select>
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="List" className={styles.inputIcon} />
+                  <select>
+                    <option>Select</option>
+                    {projects.map((p, i) => (
+                      <option key={i} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className={styles.row}>
+
+              {/* Sub Project */}
+              <div className={styles.formRow}>
                 <label>Sub Project</label>
-                <select>
-                  <option>Select</option>
-                </select>
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="List" className={styles.inputIcon} />
+                  <select>
+                    <option>Select</option>
+                    {subProjects.map((sp, i) => (
+                      <option key={i} value={sp}>
+                        {sp}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className={styles.row}>
+
+              {/* Model */}
+              <div className={styles.formRow}>
                 <label>Model</label>
-                <select>
-                  <option>Select</option>
-                </select>
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="List" className={styles.inputIcon} />
+                  <select>
+                    <option>Select</option>
+                    {models.map((m, i) => (
+                      <option key={i} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className={styles.row}>
+
+              {/* Sub Model */}
+              <div className={styles.formRow}>
                 <label>Sub Model</label>
-                <select>
-                  <option>Select</option>
-                </select>
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="List" className={styles.inputIcon} />
+                  <select>
+                    <option>Select</option>
+                    {subModels.map((sm, i) => (
+                      <option key={i} value={sm}>
+                        {sm}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className={styles.row}>
+
+              {/* Passed Quality Gate */}
+              <div className={styles.formRow}>
                 <label>Passed Quality Gate</label>
-                <select>
-                  <option>Select</option>
-                </select>
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="List" className={styles.inputIcon} />
+                  <select>
+                    <option>Select</option>
+                    {qualityGates.map((qg, i) => (
+                      <option key={i} value={qg}>
+                        {qg}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className={styles.row}>
+
+              {/* Keyword */}
+              <div className={styles.formRow}>
                 <label>Keyword</label>
-                <input type="text" />
+                <div className={styles.inputWithIcon}>
+                  <Icon iconName="Edit" className={styles.inputIcon} />
+                  <input type="text" />
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Worksheet Tab */}
+        {/* === WORKSHEET === */}
         {activeTab === "worksheet" && (
           <div className={styles.tabContainer}>
             <div className={styles.gridHeader}>
@@ -119,14 +324,14 @@ const Worksheet: React.FC<IWorksheetProps> = (props: IWorksheetProps) => {
             </div>
             <div className={styles.gridRow}>
               <label>Remarks</label>
-              <textarea placeholder="Enter remarks here..."></textarea>
+              <textarea placeholder="Enter remarks here..." />
             </div>
           </div>
         )}
 
-        {/* Check/Approval Tab */}
+        {/* === APPROVAL === */}
         {activeTab === "approval" && (
-          <div className={`${styles.tabContainer} ${styles.checkApproval}`}>
+          <div className={styles.tabContainer}>
             <div className={styles.gridHeader}>
               <div>Responsibility</div>
               <div>Person</div>
@@ -140,7 +345,7 @@ const Worksheet: React.FC<IWorksheetProps> = (props: IWorksheetProps) => {
             </div>
 
             <div className={styles.gridRow}>
-              <label>Checker1 *</label>
+              <label>Checker1 <span className={styles.req}>*</span></label>
               <input type="text" placeholder="Enter name" />
               <input type="date" />
             </div>
@@ -158,7 +363,7 @@ const Worksheet: React.FC<IWorksheetProps> = (props: IWorksheetProps) => {
             </div>
 
             <div className={styles.gridRow}>
-              <label>Approver *</label>
+              <label>Approver <span className={styles.req}>*</span></label>
               <input type="text" placeholder="Enter name" />
               <input type="date" />
             </div>
@@ -166,26 +371,28 @@ const Worksheet: React.FC<IWorksheetProps> = (props: IWorksheetProps) => {
         )}
       </div>
 
-      {/* Creator Section (always visible) */}
+      {/* === CREATOR SECTION === */}
       <div className={styles.creatorSection}>
-        <div className={styles.row}>
+        <div className={styles.formRow}>
           <label>Creator</label>
-          <input
-            type="text"
-            value="Duraisamy, Ragunath (575) (EXT)"
-            readOnly
-          />
+          <div className={styles.inputWithIcon}>
+            <Icon iconName="Contact" className={styles.inputIcon} />
+            <input type="text" value="Duraisamy, Ragunath (575) (EXT)" disabled />
+          </div>
         </div>
-        <div className={styles.row}>
+        <div className={styles.formRow}>
           <label>Deputy of Creator</label>
-          <input type="text" />
+          <div className={styles.inputWithIcon}>
+            <Icon iconName="Contact" className={styles.inputIcon} />
+            <input type="text" />
+          </div>
         </div>
-        <div className={styles.row}>
+        <div className={styles.formRow}>
           <label>Distribution list at approval</label>
-          <input
-            type="text"
-            placeholder="Enter users separated with semicolons."
-          />
+          <div className={styles.inputWithIcon}>
+            <Icon iconName="Contact" className={styles.inputIcon} />
+            <input type="text" placeholder="Enter users separated with semicolons." />
+          </div>
         </div>
       </div>
     </div>
